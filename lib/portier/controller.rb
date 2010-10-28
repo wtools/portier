@@ -36,6 +36,7 @@ module Portier
         args.flatten!
         data = class_variable_get(:@@authentication_engines) || class_variable_set(:@@authentication_engines, {})
         args.each do |engine|
+          require "portier/engines/#{engine}"
           include "Portier::Engines::#{engine.to_s.camelize}".constantize
           data[engine] = model
         end
