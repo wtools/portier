@@ -14,7 +14,7 @@ module Portier::Engines
 
     def persist_user_into_session user
       @current_user = user
-      session[:current_user_id] = user.id
+      session[:current_user_id] = user.send(user.class.primary_key)
     end
 
     def remove_user_from_session
