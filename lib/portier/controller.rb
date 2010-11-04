@@ -15,18 +15,13 @@ module Portier
     protected
 
     def do_authentication
-      (self.class.authentication_engines.keys rescue []).find do |engine|
-        @current_user = send("authenticate_from_#{engine}")
-      end
+      a = self.class.read_inheritable_attribute(:portier_engines) or return
+      a.keys.find { |e| @current_user = send("authenticate_from_#{e}") }
     end
 
     module ClassMethods
-      def self.extended controller
-        controller.send :cattr_reader, :authentication_engines
-      end
-
       def user_model_for engine
-        @@authentication_engines[engine].constantize
+        read_inheritable_attribute(:portier_engines)[engine].constantize
       end
 
       def authenticate_from *args
@@ -34,7 +29,7 @@ module Portier
         model = opts[:model] || 'User'
 
         args.flatten!
-        data = class_variable_get(:@@authentication_engines) || class_variable_set(:@@authentication_engines, {})
+        data = read_inheritable_attribute(:portier_engines) || write_inheritable_attribute(:portier_engines, {})
         args.each do |engine|
           require "portier/engines/#{engine}"
           include "Portier::Engines::#{engine.to_s.camelize}".constantize
