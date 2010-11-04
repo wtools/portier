@@ -6,7 +6,7 @@ module Portier
       def authenticate_from_session
         if session[:current_user_id]
           begin
-            self.class.user_model_for(:session).find session[:current_user_id]
+            @current_user = self.class.user_model_for(:session).find session[:current_user_id]
           rescue
             remove_user_from_session
           end
