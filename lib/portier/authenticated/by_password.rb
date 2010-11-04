@@ -9,7 +9,7 @@ module Portier::Authenticated
 
     def self.configure model, opts
       model.send :write_inheritable_attribute,
-                 :portier_identity, opts[:identity] || :username
+                 :portier_identity, opts[:identity].to_s || 'username'
       model.send :write_inheritable_attribute,
                  :portier_scope,    opts[:scope]    || :scoped
     end
@@ -21,10 +21,11 @@ module Portier::Authenticated
 
     module ClassMethods
       def authenticate params
+        params = params.stringify_keys
         identity = read_inheritable_attribute :portier_identity
         u = send(read_inheritable_attribute(:portier_scope)).
             where(identity => params[identity]).first
-        u if u && BCrypt::Password.new(u.crypted_password) == params[:password]
+        u if u && BCrypt::Password.new(u.crypted_password) == params['password']
       end
     end
   end
