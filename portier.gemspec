@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'portier'
-  s.version = '0.0.1'
+  s.version = '0.0.2'
 
   s.authors = ['Roland Venesz']
   s.date = '2010-10-28'

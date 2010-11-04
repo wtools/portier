@@ -7,7 +7,7 @@ module Portier
         if session[:current_user_id]
           begin
             @current_user = self.class.user_model_for(:session).find session[:current_user_id]
-          rescue
+          rescue ActiveRecord::RecordNotFound
             remove_user_from_session
           end
         end
